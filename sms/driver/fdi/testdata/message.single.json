@@ -1,0 +1,7 @@
+{
+    "success": true,
+    "message": "Message successfully queued",
+    "cost": 1,
+    "msgRef": "30bb083a-ae95-43b9-8ed5-051693d018af",
+    "gatewayRef": "3e381e5d-3dfe-4b27-99d9-6e6f8bcdce30"
+  }

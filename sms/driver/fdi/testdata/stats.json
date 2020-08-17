@@ -1,0 +1,13 @@
+{
+    "success": true,
+    "date": "2019-01-01T00:00:00.000Z",
+    "mt": {
+      "sent": 400,
+      "delivered": 100,
+      "failed": 50,
+      "pending": 250
+    },
+    "mo": {
+      "received": 420
+    }
+  }
