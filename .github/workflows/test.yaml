@@ -27,5 +27,5 @@ jobs:
           GOPROXY: "https://proxy.golang.org"
           CODECOV_TOKEN: ${{ secrets.SuperSecret }}
         run: | 
-          go test -race -coverprofile=coverage.out -covermode=atomic
+          go test -race -coverprofile=coverage.out -covermode=atomic ./...
           curl -s https://codecov.io/bash | bash
