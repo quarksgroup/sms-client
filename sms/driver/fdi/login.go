@@ -2,7 +2,6 @@ package fdi
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/quarksgroup/sms-client/sms"
@@ -15,7 +14,7 @@ type loginService struct {
 }
 
 func (s *loginService) Login(ctx context.Context, id, secret string) (*sms.Token, *sms.Response, error) {
-	endpoint := fmt.Sprintf("auth")
+	endpoint := "auth"
 	in := login{
 		User:     id,
 		Password: secret,

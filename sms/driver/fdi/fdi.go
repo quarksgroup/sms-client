@@ -57,7 +57,7 @@ func (c *wrapper) do(ctx context.Context, method, path string, in, out interface
 	// write it to the body of the request.
 	if in != nil {
 		buf := new(bytes.Buffer)
-		json.NewEncoder(buf).Encode(in)
+		_ = json.NewEncoder(buf).Encode(in)
 		req.Header = map[string][]string{
 			"Content-Type": {"application/json"},
 		}
@@ -75,7 +75,7 @@ func (c *wrapper) do(ctx context.Context, method, path string, in, out interface
 	// error response.
 	if res.Status > 299 {
 		err := new(Error)
-		json.NewDecoder(res.Body).Decode(err)
+		_ = json.NewDecoder(res.Body).Decode(err)
 		return res, err
 	}
 

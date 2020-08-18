@@ -28,7 +28,7 @@ func TestStatCurrent(t *testing.T) {
 	require.Nil(t, err, fmt.Sprintf("unexpected error '%v'", err))
 	want := new(sms.Stats)
 	raw, _ := ioutil.ReadFile("testdata/stats.json.golden")
-	json.Unmarshal(raw, want)
+	_ = json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
 		t.Errorf("Unexpected Results")
@@ -54,7 +54,7 @@ func TestStatsAt(t *testing.T) {
 	require.Nil(t, err, fmt.Sprintf("unexpected error '%v'", err))
 	want := new(sms.Stats)
 	raw, _ := ioutil.ReadFile("testdata/stats.json.golden")
-	json.Unmarshal(raw, want)
+	_ = json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
 		t.Errorf("Unexpected Results")

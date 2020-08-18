@@ -20,7 +20,7 @@ func (s *statsService) At(ctx context.Context, at string) (*sms.Stats, *sms.Resp
 }
 
 func (s *statsService) Current(ctx context.Context) (*sms.Stats, *sms.Response, error) {
-	endpoint := fmt.Sprintf("stats/now")
+	endpoint := "stats/now"
 	out := new(stats)
 	res, err := s.client.do(ctx, "GET", endpoint, nil, out)
 	return convertStats(out), res, err

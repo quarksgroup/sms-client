@@ -33,7 +33,7 @@ func TestSingleSend(t *testing.T) {
 	require.Nil(t, err, fmt.Sprintf("unexpected error '%v'", err))
 	want := new(sms.Report)
 	raw, _ := ioutil.ReadFile("testdata/message.single.json.golden")
-	json.Unmarshal(raw, want)
+	_ = json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
 		t.Errorf("Unexpected Results")
@@ -61,7 +61,7 @@ func TestBulkSend(t *testing.T) {
 	require.Nil(t, err, fmt.Sprintf("unexpected error '%v'", err))
 	want := new(sms.Report)
 	raw, _ := ioutil.ReadFile("testdata/message.bulk.json.golden")
-	json.Unmarshal(raw, want)
+	_ = json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
 		t.Errorf("Unexpected Results")

@@ -29,7 +29,7 @@ func TestBalanceCurrent(t *testing.T) {
 	require.Nil(t, err, fmt.Sprintf("unexpected error '%v'", err))
 	want := new(sms.Balance)
 	raw, _ := ioutil.ReadFile("testdata/balance.now.json.golden")
-	json.Unmarshal(raw, want)
+	_ = json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
 		t.Errorf("Unexpected Results")
@@ -55,7 +55,7 @@ func TestBalanceAt(t *testing.T) {
 	require.Nil(t, err, fmt.Sprintf("unexpected error '%v'", err))
 	want := new(sms.Balance)
 	raw, _ := ioutil.ReadFile("testdata/balance.at.json.golden")
-	json.Unmarshal(raw, want)
+	_ = json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
 		t.Errorf("Unexpected Results")

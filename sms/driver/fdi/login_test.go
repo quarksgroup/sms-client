@@ -29,7 +29,7 @@ func TestLogin(t *testing.T) {
 
 	want := new(sms.Token)
 	raw, _ := ioutil.ReadFile("testdata/token.json.golden")
-	json.Unmarshal(raw, want)
+	_ = json.Unmarshal(raw, want)
 
 	if diff := cmp.Diff(got, want); diff != "" {
 		t.Errorf("Unexpected Results")

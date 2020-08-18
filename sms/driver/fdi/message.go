@@ -25,7 +25,7 @@ func (s *sendService) Send(ctx context.Context, message sms.Message) (*sms.Repor
 }
 
 func (s *sendService) Single(ctx context.Context, message sms.Message) (*sms.Report, *sms.Response, error) {
-	endpoint := fmt.Sprintf("mt/single")
+	endpoint := "mt/single"
 	in := singleSend{
 		Reference: message.ID,
 		Body:      message.Body,
@@ -39,7 +39,7 @@ func (s *sendService) Single(ctx context.Context, message sms.Message) (*sms.Rep
 }
 
 func (s *sendService) Bulk(ctx context.Context, message sms.Message) (*sms.Report, *sms.Response, error) {
-	endpoint := fmt.Sprintf("mt/bulk")
+	endpoint := "mt/bulk"
 	in := bulkSend{
 		Reference: message.ID,
 		Body:      message.Body,

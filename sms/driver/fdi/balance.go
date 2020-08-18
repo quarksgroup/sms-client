@@ -14,7 +14,7 @@ type balanceService struct {
 }
 
 func (s *balanceService) Current(ctx context.Context) (*sms.Balance, *sms.Response, error) {
-	endpoint := fmt.Sprintf("balance/now")
+	endpoint := "balance/now"
 	out := new(currentBalance)
 	res, err := s.client.do(ctx, "GET", endpoint, nil, out)
 	return convertCurrent(out), res, err
