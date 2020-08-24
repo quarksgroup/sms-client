@@ -2,3 +2,4 @@
 ![Lint](https://github.com/quarksgroup/sms-client/workflows/Lint/badge.svg)
 [![codecov](https://codecov.io/gh/quarksgroup/sms-client/branch/master/graph/badge.svg)](https://codecov.io/gh/quarksgroup/sms-client)
 # sms-client
+The sms client used internally at quarksgroup.
