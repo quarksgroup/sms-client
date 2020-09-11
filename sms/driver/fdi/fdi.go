@@ -27,7 +27,7 @@ func New(uri string) (*sms.Client, error) {
 	client.Driver = sms.DriverFdi
 	client.Balance = &balanceService{client}
 	client.Message = &sendService{client}
-	client.Login = &loginService{client}
+	client.Auth = &loginService{client}
 	client.Stats = &statsService{client}
 
 	return client.Client, nil
@@ -75,6 +75,7 @@ func (c *wrapper) do(ctx context.Context, method, path string, in, out interface
 	// error response.
 	if res.Status > 299 {
 		err := new(Error)
+		err.Code = res.Status
 		_ = json.NewDecoder(res.Body).Decode(err)
 		return res, err
 	}
@@ -90,6 +91,7 @@ func (c *wrapper) do(ctx context.Context, method, path string, in, out interface
 
 // Error represents a Github error.
 type Error struct {
+	Code    int    `json:"code"`
 	Message string `json:"message"`
 }
 

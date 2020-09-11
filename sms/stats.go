@@ -28,7 +28,7 @@ type (
 	}
 	// StatsService ...
 	StatsService interface {
-		// At gets credit balance at any given date
+		// At gets credit balance at any given date (eg;2020-09-02).
 		At(ctx context.Context, at string) (*Stats, *Response, error)
 
 		// Current gets the current credit Balance.

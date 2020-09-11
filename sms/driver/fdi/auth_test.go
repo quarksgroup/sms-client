@@ -1,13 +1,42 @@
-package oauth2
+package fdi
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"testing"
 	"time"
 
+	"github.com/google/go-cmp/cmp"
 	"github.com/quarksgroup/sms-client/sms"
+	"github.com/stretchr/testify/require"
 	"gopkg.in/h2non/gock.v1"
 )
+
+func TestLogin(t *testing.T) {
+	defer gock.Off()
+
+	gock.New("https://messaging.fdibiz.com/api/v1").
+		Post("/auth").
+		Reply(200).
+		Type("application/json").
+		File("testdata/token.json")
+	client := NewDefault()
+
+	got, _, err := client.Auth.Login(context.Background(), "id", "secret")
+
+	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
+
+	want := new(sms.Token)
+	raw, _ := ioutil.ReadFile("testdata/token.json.golden")
+	_ = json.Unmarshal(raw, want)
+
+	if diff := cmp.Diff(got, want); diff != "" {
+		t.Errorf("Unexpected Results")
+		t.Log(diff)
+	}
+}
 
 func TestRefresh(t *testing.T) {
 	gock.New("https://messaging.fdibiz.com/api/v1/auth").
@@ -15,47 +44,41 @@ func TestRefresh(t *testing.T) {
 		Reply(200).
 		File("testdata/token.json")
 
-	before := &sms.Token{
+	client := NewDefault()
+
+	expired := &sms.Token{
 		Refresh: "3a2bfce4cb9b0f",
 	}
 
-	r := Refresher{
-		Endpoint: "https://messaging.fdibiz.com/api/v1/auth/refresh",
-		Source:   StaticTokenSource(before),
-	}
+	after, _, err := client.Auth.Refresh(context.Background(), expired, false)
+	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
 
-	ctx := context.Background()
-	after, err := r.Token(ctx)
-	if err != nil {
-		t.Error(err)
-	}
+	want := new(sms.Token)
+	raw, _ := ioutil.ReadFile("testdata/token.json.golden")
+	_ = json.Unmarshal(raw, want)
 
-	if after.Token != "9698fa6a8113b3" {
+	if after.Token != want.Token {
 		t.Errorf("Expect access token updated")
 	}
 	if after.Expires.IsZero() {
 		t.Errorf("Expect access token expiry updated")
 	}
-	if after.Refresh != "3a2bfce4cb9b0f" {
+	if after.Refresh != want.Refresh {
 		t.Errorf("Expect refresh token not changed, got %s", after.Refresh)
 	}
+
 }
 
 func TestRefresh_NotExpired(t *testing.T) {
+	client := NewDefault()
+
 	before := &sms.Token{
 		Token: "6084984dab20e6",
 	}
-	r := Refresher{
-		Endpoint: "https://messaging.fdibiz.com/api/v1/auth/refresh",
-		Source:   StaticTokenSource(before),
-	}
 
-	ctx := context.Background()
-	after, err := r.Token(ctx)
-	if err != nil {
-		t.Error(err)
-		return
-	}
+	after, _, err := client.Auth.Refresh(context.Background(), before, false)
+	require.Nil(t, err, fmt.Sprintf("unexpected error %v", err))
+
 	if after == nil {
 		t.Errorf("Expected Token, got nil")
 		return

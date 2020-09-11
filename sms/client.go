@@ -48,7 +48,7 @@ type Client struct {
 	Driver  Driver
 	Message SendService
 	Balance BalanceService
-	Login   LoginService
+	Auth    AuthService
 	Stats   StatsService
 
 	// DumpResponse optionally specifies a function to

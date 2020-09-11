@@ -18,10 +18,10 @@ type (
 	}
 	// BalanceService ...
 	BalanceService interface {
-		// Current returns the current balance
+		// Current returns the current balance (as of now)
 		Current(context.Context) (*Balance, *Response, error)
 
-		// At returns the balance at a given date
+		// At returns the balance at a given date (eg;2020-09-02).
 		At(context.Context, string) (*Balance, *Response, error)
 	}
 )

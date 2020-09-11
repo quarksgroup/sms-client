@@ -3,7 +3,7 @@ package sms
 // Driver identifies source code management driver.
 type Driver int
 
-// Drivers we support
+// Drivers(sms gateways) we support
 const (
 	DriverUnknown Driver = iota
 	DriverFdi

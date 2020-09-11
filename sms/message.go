@@ -3,7 +3,7 @@ package sms
 import "context"
 
 type (
-	// Message ...
+	// Message contains all the details about the sms to be sent
 	Message struct {
 		ID         string // Unique id for the current message
 		Body       string // The content of the message

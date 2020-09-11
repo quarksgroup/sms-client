@@ -19,9 +19,13 @@ type (
 		Token(context.Context) (*Token, error)
 	}
 
-	// LoginService ..
-	LoginService interface {
+	// AuthService ..
+	AuthService interface {
+		// Login the underlying API and get an JWT token
 		Login(ctx context.Context, id, secret string) (*Token, *Response, error)
+
+		// Refresh the oauth2 token
+		Refresh(ctx context.Context, token *Token, force bool) (*Token, *Response, error)
 	}
 
 	// TokenKey is the key to use with the context.WithValue
