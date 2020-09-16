@@ -56,16 +56,16 @@ type singleSend struct {
 	Reference string `json:"msgRef"`
 	Body      string `json:"message"`
 	MSISDN    string `json:"msisdn"`
-	Dlr       string `json:"dlr"`
-	Sender    string `json:"sender_id"`
+	Dlr       string `json:"dlr,omitempty"`
+	Sender    string `json:"sender_id,omitempty"`
 }
 
 type bulkSend struct {
 	Reference string   `json:"msgRef"`
 	Body      string   `json:"message"`
 	MSISDN    []string `json:"msisdn_list"`
-	Dlr       string   `json:"dlr"`
-	Sender    string   `json:"sender_id"`
+	Dlr       string   `json:"dlr,omitempty"`
+	Sender    string   `json:"sender_id,omitempty"`
 }
 
 type reportSingle struct {
