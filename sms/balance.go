@@ -16,7 +16,7 @@ type (
 		// The date for which the balance was queried(Format:2019-01-01)
 		Date string
 	}
-	// BalanceService ...
+	// BalanceService handles your sms credit balance.
 	BalanceService interface {
 		// Current returns the current balance (as of now)
 		Current(context.Context) (*Balance, *Response, error)

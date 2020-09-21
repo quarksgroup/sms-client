@@ -18,7 +18,9 @@ type (
 		Cost int64
 	}
 
-	// SendService ...
+	// SendService is the principal interface.
+	// it sends a message returns a delivery report an serializable response
+	// and if there is a problem returns an error
 	SendService interface {
 		Send(context.Context, Message) (*Report, *Response, error)
 	}
