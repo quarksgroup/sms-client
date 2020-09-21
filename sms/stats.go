@@ -26,7 +26,7 @@ type (
 		// The date at which this data is obtained
 		Date time.Time
 	}
-	// StatsService ...
+	// StatsService handles information(stats) about your sms sending habits.
 	StatsService interface {
 		// At gets credit balance at any given date (eg;2020-09-02).
 		At(ctx context.Context, at string) (*Stats, *Response, error)

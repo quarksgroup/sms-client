@@ -19,7 +19,7 @@ type (
 		Token(context.Context) (*Token, error)
 	}
 
-	// AuthService ..
+	// AuthService handles authentication to the underlying API
 	AuthService interface {
 		// Login the underlying API and get an JWT token
 		Login(ctx context.Context, id, secret string) (*Token, *Response, error)
