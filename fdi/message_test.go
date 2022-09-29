@@ -1,70 +1,88 @@
 package fdi
 
-// import (
-// 	"context"
-// 	"encoding/json"
-// 	"fmt"
-// 	"io/ioutil"
-// 	"testing"
+import (
+	"context"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"testing"
 
-// 	"github.com/google/go-cmp/cmp"
-// 	"github.com/quarksgroup/sms-client/sms"
-// 	"github.com/stretchr/testify/require"
-// 	"gopkg.in/h2non/gock.v1"
-// )
+	"github.com/google/go-cmp/cmp"
+	"github.com/quarksgroup/sms-client/mock"
+	"github.com/stretchr/testify/require"
+	"gopkg.in/h2non/gock.v1"
+)
 
-// func TestSingleSend(t *testing.T) {
-// 	gock.New("https://messaging.fdibiz.com/api/v1").
-// 		Post("/mt/single").
-// 		Reply(200).
-// 		Type("application/json").
-// 		File("testdata/message.single.json")
+func TestSingleSend(t *testing.T) {
+	gock.New("https://messaging.fdibiz.com/api/v1").
+		Post("/mt/single").
+		Reply(200).
+		Type("application/json").
+		File("testdata/message.single.json")
 
-// 	client := NewDefault()
+	cfg := &Config{
+		ClientId: "client_id",
+		Secret:   "client_secret",
+	}
 
-// 	message := sms.Message{
-// 		ID:         "30bb083a-ae95-43b9-8ed5-051693d018af",
-// 		Body:       "Hello world",
-// 		Sender:     "Paypack",
-// 		Recipients: []string{"0789640100"},
-// 	}
+	tokenSource := mock.NewMockTokenSource()
 
-// 	got, _, err := client.Message.Send(context.Background(), message)
-// 	require.Nil(t, err, fmt.Sprintf("unexpected error '%v'", err))
-// 	want := new(sms.Report)
-// 	raw, _ := ioutil.ReadFile("testdata/message.single.json.golden")
-// 	_ = json.Unmarshal(raw, want)
+	client, err := New(baseUrl, cfg, tokenSource, retry)
 
-// 	if diff := cmp.Diff(got, want); diff != "" {
-// 		t.Errorf("Unexpected Results")
-// 		t.Log(diff)
-// 	}
-// }
+	require.Nil(t, err, fmt.Sprintf("client initialization error %v", err))
 
-// func TestBulkSend(t *testing.T) {
-// 	gock.New("https://messaging.fdibiz.com/api/v1").
-// 		Post("/mt/bulk").
-// 		Reply(200).
-// 		Type("application/json").
-// 		File("testdata/message.bulk.json")
+	message := Message{
+		ID:         "30bb083a-ae95-43b9-8ed5-051693d018af",
+		Body:       "Hello world",
+		Sender:     "Paypack",
+		Recipients: []string{"0789640100"},
+	}
 
-// 	client := NewDefault()
+	got, _, err := client.Send(context.Background(), message)
+	require.Nil(t, err, fmt.Sprintf("unexpected error '%v'", err))
+	want := new(Report)
+	raw, _ := ioutil.ReadFile("testdata/message.single.json.golden")
+	_ = json.Unmarshal(raw, want)
 
-// 	message := sms.Message{
-// 		ID:         "30bb083a-ae95-43b9-8ed5-051693d018af",
-// 		Body:       "Hello world",
-// 		Sender:     "Paypack",
-// 		Recipients: []string{"0789640100", "0783205104"},
-// 	}
+	if diff := cmp.Diff(got, want); diff != "" {
+		t.Errorf("Unexpected Results")
+		t.Log(diff)
+	}
+}
 
-// 	got, _, err := client.Message.Send(context.Background(), message)
-// 	require.Nil(t, err, fmt.Sprintf("unexpected error '%v'", err))
-// 	want := new(sms.Report)
-// 	raw, _ := ioutil.ReadFile("testdata/message.bulk.json.golden")
-// 	_ = json.Unmarshal(raw, want)
+func TestBulkSend(t *testing.T) {
+	gock.New("https://messaging.fdibiz.com/api/v1").
+		Post("/mt/bulk").
+		Reply(200).
+		Type("application/json").
+		File("testdata/message.bulk.json")
 
-// 	if diff := cmp.Diff(got, want); diff != "" {
-// 		t.Errorf("Unexpected Results")
-// 		t.Log(diff)
-// 	}
-// }
+	cfg := &Config{
+		ClientId: "client_id",
+		Secret:   "client_secret",
+	}
+
+	tokenSource := mock.NewMockTokenSource()
+
+	client, err := New(baseUrl, cfg, tokenSource, retry)
+
+	require.Nil(t, err, fmt.Sprintf("client initialization error %v", err))
+
+	message := Message{
+		ID:         "30bb083a-ae95-43b9-8ed5-051693d018af",
+		Body:       "Hello world",
+		Sender:     "Paypack",
+		Recipients: []string{"0789640100", "0783205104"},
+	}
+
+	got, _, err := client.Send(context.Background(), message)
+	require.Nil(t, err, fmt.Sprintf("unexpected error '%v'", err))
+	want := new(Report)
+	raw, _ := ioutil.ReadFile("testdata/message.bulk.json.golden")
+	_ = json.Unmarshal(raw, want)
+
+	if diff := cmp.Diff(got, want); diff != "" {
+		t.Errorf("Unexpected Results")
+		t.Log(diff)
+	}
+}
