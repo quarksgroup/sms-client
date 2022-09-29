@@ -1,9 +1,10 @@
 module github.com/quarksgroup/sms-client
 
-go 1.14
+go 1.16
 
 require (
-	github.com/google/go-cmp v0.5.1
-	github.com/stretchr/testify v1.6.1
-	gopkg.in/h2non/gock.v1 v1.0.15
+	github.com/PuerkitoBio/rehttp v1.1.0
+	github.com/google/go-cmp v0.5.9
+	github.com/stretchr/testify v1.8.0
+	gopkg.in/h2non/gock.v1 v1.1.2
 )

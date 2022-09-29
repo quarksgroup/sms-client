@@ -1,25 +1,10 @@
-package sms
+package client
 
 import (
 	"context"
-	"errors"
 	"io"
 	"net/http"
 	"net/url"
-)
-
-var (
-	// ErrNotFound indicates a resource is not found.
-	ErrNotFound = errors.New("Not Found")
-
-	// ErrNotSupported indicates a resource endpoint is not
-	// supported or implemented.
-	ErrNotSupported = errors.New("Not Supported")
-
-	// ErrNotAuthorized indicates the request is not
-	// authorized or the user does not have access to the
-	// resource.
-	ErrNotAuthorized = errors.New("Not Authorized")
 )
 
 // Request represents an HTTP request.
@@ -38,18 +23,17 @@ type Response struct {
 	Body   io.ReadCloser
 }
 
-// Client manages communication with a payment gateways API.
+// Client manages communication with a sms gateways API.
 type Client struct {
+	// HTTP client used to communicate with the API.
 	Client *http.Client
 
-	// Base URL for API requests.
+	// Base URL for API requests. Defaults to the public sms API, but can be
+	// BaseURL should always be specified with a trailing slash.
 	BaseURL *url.URL
 
-	Driver  Driver
-	Message SendService
-	Balance BalanceService
-	Auth    AuthService
-	Stats   StatsService
+	// User agent used when communicating with the sms API.
+	UserAgent string
 
 	// DumpResponse optionally specifies a function to
 	// dump the the response body for debugging purposes.
@@ -64,12 +48,14 @@ func (c *Client) Do(ctx context.Context, in *Request) (*Response, error) {
 		return nil, err
 	}
 
+	var req *http.Request
+
 	// creates a new http request with context.
-	req, err := http.NewRequest(in.Method, uri.String(), in.Body)
+	req, err = http.NewRequest(in.Method, uri.String(), in.Body)
+
 	if err != nil {
 		return nil, err
 	}
-
 	req = req.WithContext(ctx)
 	if in.Header != nil {
 		req.Header = in.Header
@@ -87,10 +73,7 @@ func (c *Client) Do(ctx context.Context, in *Request) (*Response, error) {
 
 	// dumps the response for debugging purposes.
 	if c.DumpResponse != nil {
-		_, err := c.DumpResponse(res, true)
-		if err != nil {
-			return nil, err
-		}
+		_, _ = c.DumpResponse(res, true)
 	}
 
 	return newResponse(res), nil

@@ -8,11 +8,12 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/quarksgroup/sms-client/sms"
+	"github.com/quarksgroup/sms-client/mock"
 	"github.com/stretchr/testify/require"
 	"gopkg.in/h2non/gock.v1"
 )
 
+// TestBalanceCurrent tests the balance at the current time
 func TestBalanceCurrent(t *testing.T) {
 	defer gock.Off()
 
@@ -22,12 +23,21 @@ func TestBalanceCurrent(t *testing.T) {
 		Type("application/json").
 		File("testdata/balance.now.json")
 
-	client := NewDefault()
+	cfg := &Config{
+		ClientId: "client_id",
+		Secret:   "client_secret",
+	}
 
-	got, _, err := client.Balance.Current(context.Background())
+	tokenSource := mock.NewMockTokenSource()
+
+	client, err := New(baseUrl, cfg, tokenSource, retry)
+
+	require.Nil(t, err, fmt.Sprintf("client initialization error %v", err))
+
+	got, _, err := client.Balance(context.Background())
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error '%v'", err))
-	want := new(sms.Balance)
+	want := new(Balance)
 	raw, _ := ioutil.ReadFile("testdata/balance.now.json.golden")
 	_ = json.Unmarshal(raw, want)
 
@@ -37,6 +47,7 @@ func TestBalanceCurrent(t *testing.T) {
 	}
 }
 
+// TestBalanceAt tests the balance at a given time
 func TestBalanceAt(t *testing.T) {
 	defer gock.Off()
 
@@ -48,12 +59,21 @@ func TestBalanceAt(t *testing.T) {
 		Type("application/json").
 		File("testdata/balance.at.json")
 
-	client := NewDefault()
+	cfg := &Config{
+		ClientId: "client_id",
+		Secret:   "client_secret",
+	}
 
-	got, _, err := client.Balance.At(context.Background(), at)
+	tokenSource := mock.NewMockTokenSource()
+
+	client, err := New(baseUrl, cfg, tokenSource, retry)
+
+	require.Nil(t, err, fmt.Sprintf("client initialization error %v", err))
+
+	got, _, err := client.BalanceAt(context.Background(), at)
 
 	require.Nil(t, err, fmt.Sprintf("unexpected error '%v'", err))
-	want := new(sms.Balance)
+	want := new(Balance)
 	raw, _ := ioutil.ReadFile("testdata/balance.at.json.golden")
 	_ = json.Unmarshal(raw, want)
 

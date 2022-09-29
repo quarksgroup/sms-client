@@ -4,27 +4,40 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/quarksgroup/sms-client/sms"
+	"github.com/quarksgroup/sms-client/client"
 )
 
-var _ (sms.SendService) = (*sendService)(nil)
+type (
+	// Message contains all the details about the sms to be sent
+	Message struct {
+		ID         string // Unique id for the current message
+		Body       string // The content of the message
+		Report     string // Callback url to report back to(Optional)
+		Sender     string
+		Recipients []string // The recipients of this particular message
+	}
 
-type sendService struct {
-	client *wrapper
-}
+	// Report back sent message details
+	Report struct {
+		ID   string
+		Cost int64
+	}
+)
 
-func (s *sendService) Send(ctx context.Context, message sms.Message) (*sms.Report, *sms.Response, error) {
+// it sends a message returns a delivery report an serializable response
+// and if there is a problem returns an error
+func (c *Client) Send(ctx context.Context, message Message) (*Report, *client.Response, error) {
 	n := len(message.Recipients)
 	if n < 1 {
 		return nil, nil, fmt.Errorf("can't send message to zero recipients")
 	}
 	if n == 1 {
-		return s.Single(ctx, message)
+		return c.Single(ctx, message)
 	}
-	return s.Bulk(ctx, message)
+	return c.Bulk(ctx, message)
 }
 
-func (s *sendService) Single(ctx context.Context, message sms.Message) (*sms.Report, *sms.Response, error) {
+func (c *Client) Single(ctx context.Context, message Message) (*Report, *client.Response, error) {
 	endpoint := "mt/single"
 	in := singleSend{
 		Reference: message.ID,
@@ -34,11 +47,11 @@ func (s *sendService) Single(ctx context.Context, message sms.Message) (*sms.Rep
 		MSISDN:    message.Recipients[0],
 	}
 	out := new(reportSingle)
-	res, err := s.client.do(ctx, "POST", endpoint, in, out)
+	res, err := c.do(ctx, "POST", endpoint, in, out, true)
 	return convertSingle(out), res, err
 }
 
-func (s *sendService) Bulk(ctx context.Context, message sms.Message) (*sms.Report, *sms.Response, error) {
+func (c *Client) Bulk(ctx context.Context, message Message) (*Report, *client.Response, error) {
 	endpoint := "mt/bulk"
 	in := bulkSend{
 		Reference: message.ID,
@@ -48,7 +61,7 @@ func (s *sendService) Bulk(ctx context.Context, message sms.Message) (*sms.Repor
 		MSISDN:    message.Recipients,
 	}
 	out := new(reportBulk)
-	res, err := s.client.do(ctx, "POST", endpoint, in, out)
+	res, err := c.do(ctx, "POST", endpoint, in, out, true)
 	return convertBulk(out), res, err
 }
 
@@ -88,15 +101,15 @@ type reportBulk struct {
 	} `json:"data"`
 }
 
-func convertSingle(from *reportSingle) *sms.Report {
-	return &sms.Report{
+func convertSingle(from *reportSingle) *Report {
+	return &Report{
 		ID:   from.MessageReference,
 		Cost: from.Cost,
 	}
 }
 
-func convertBulk(from *reportBulk) *sms.Report {
-	return &sms.Report{
+func convertBulk(from *reportBulk) *Report {
+	return &Report{
 		ID:   from.MessageReference,
 		Cost: from.Cost,
 	}
